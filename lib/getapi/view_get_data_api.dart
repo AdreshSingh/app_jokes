@@ -11,7 +11,6 @@ class ViewGetDataApi extends StatefulWidget {
 class _ViewGetDataApiState extends State<ViewGetDataApi> {
   late Future<dynamic> _jokes;
 
-
   Future<dynamic> fetchjokes() async {
     final response = await Dio().get(
       'https://official-joke-api.appspot.com/random_joke',
@@ -24,7 +23,6 @@ class _ViewGetDataApiState extends State<ViewGetDataApi> {
     super.initState();
     _jokes = fetchjokes();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +40,14 @@ class _ViewGetDataApiState extends State<ViewGetDataApi> {
           future: _jokes,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Text(snapshot.data.toString());
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(snapshot.data.toString()),
+                  Joke(snapshot: snapshot),
+                ],
+              );
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             }
@@ -51,6 +56,23 @@ class _ViewGetDataApiState extends State<ViewGetDataApi> {
           },
         ),
       ),
+    );
+  }
+}
+
+class Joke extends StatelessWidget {
+  final dynamic snapshot;
+  const Joke({super.key, required this.snapshot});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('Setup: ${snapshot.data['setup']}'),
+        Text('Punchline: ${snapshot.data['punchline']}'),
+      ],
     );
   }
 }
