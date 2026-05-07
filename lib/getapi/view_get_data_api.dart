@@ -9,14 +9,14 @@ class ViewGetDataApi extends StatefulWidget {
 }
 
 class _ViewGetDataApiState extends State<ViewGetDataApi> {
-  late Future<String?> _jokes;
+  late Future<dynamic> _jokes;
 
 
-  Future<String?> fetchjokes() async {
+  Future<dynamic> fetchjokes() async {
     final response = await Dio().get(
       'https://official-joke-api.appspot.com/random_joke',
     );
-    return response.data as String?;
+    return response.data;
   }
 
   @override
@@ -38,11 +38,13 @@ class _ViewGetDataApiState extends State<ViewGetDataApi> {
       body: Padding(
         padding: const EdgeInsets.all(20),
 
-        child: FutureBuilder<String?>(
+        child: FutureBuilder<dynamic>(
           future: _jokes,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Text(snapshot.data.toString());
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
             }
 
             return Center(child: CircularProgressIndicator());
