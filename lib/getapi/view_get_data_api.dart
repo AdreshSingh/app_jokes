@@ -9,48 +9,46 @@ class ViewGetDataApi extends StatefulWidget {
 }
 
 class _ViewGetDataApiState extends State<ViewGetDataApi> {
+  late Future<String?> _jokes;
 
 
-  Future<dynamic> fetchjokes()async{
-    final response =
-    await Dio().get(
-
-      'https://official-joke-api.appspot.com/random_joke'
+  Future<String?> fetchjokes() async {
+    final response = await Dio().get(
+      'https://official-joke-api.appspot.com/random_joke',
     );
-    return response.data;
+    return response.data as String?;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _jokes = fetchjokes();
   }
 
 
-
-
   @override
-  Future<Widget> build(BuildContext context) async {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: (){}, icon: Icon(Icons.more)),
+        leading: IconButton(onPressed: () {}, icon: Icon(Icons.more)),
         centerTitle: true,
         title: const Text('Get Data API'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Padding(padding: const EdgeInsets.all(20),
-       
-       child: FutureBuilder<String?>(
-  future: await fetchjokes(),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
 
-  builder: (context, snapshot) {
+        child: FutureBuilder<String?>(
+          future: _jokes,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Text(snapshot.data.toString());
+            }
 
-    if(snapshot.hasData){
-      return Text(snapshot.data.toString());
-    }
-
-    return Center(
-      child: CircularProgressIndicator(),
-    );
-  },
-),
-
+            return Center(child: CircularProgressIndicator());
+          },
+        ),
       ),
-      
     );
   }
 }
